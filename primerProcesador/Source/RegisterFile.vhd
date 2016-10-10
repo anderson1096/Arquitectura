@@ -36,10 +36,9 @@ entity RegisterFile is
            Rs2 : in  STD_LOGIC_VECTOR (4 downto 0);
            Rd : in  STD_LOGIC_VECTOR (4 downto 0);
            Reset : in  STD_LOGIC;
-			  WEnable : in  STD_LOGIC;
            Data : in  STD_LOGIC_VECTOR (31 downto 0);
-           Crs1 : out  STD_LOGIC_VECTOR (31 downto 0);
-           Crs2 : out  STD_LOGIC_VECTOR (31 downto 0));
+           Crs1 : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
+           Crs2 : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0'));
 end RegisterFile;
 
 architecture Behavioral of RegisterFile is
@@ -53,11 +52,11 @@ begin
 			if Reset = '1' then
 				Crs1 <= (others => '0');
 				Crs2 <= (others => '0');
+				registros <= (others => x"00000000");
 			else
 				Crs1 <= registros(conv_integer(Rs1));
 				Crs2 <= registros(conv_integer(Rs2));
-				
-				if WEnable = '1' and Rd /= "00000" then
+				if Rd /= "00000" then
 					registros(conv_integer(Rd)) <= Data;
 				end if;
 			end if;

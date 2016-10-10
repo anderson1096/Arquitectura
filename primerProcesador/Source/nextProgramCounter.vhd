@@ -35,7 +35,7 @@ entity nextProgramCounter is
     Port ( InAddress : in  STD_LOGIC_VECTOR (31 downto 0);
            clk : in  STD_LOGIC;
            Reset : in  STD_LOGIC;
-           outAddress : out  STD_LOGIC_VECTOR (31 downto 0));
+           outAddress : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0'));
 end nextProgramCounter;
 
 architecture arq_nextProgramCounter of nextProgramCounter is

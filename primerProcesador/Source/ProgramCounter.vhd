@@ -7,8 +7,7 @@ entity ProgramCounter is
     Port ( clk : in  STD_LOGIC;
            Reset : in  STD_LOGIC;
            InAddress : in  STD_LOGIC_VECTOR (31 downto 0);
-           OutAddress : out  STD_LOGIC_VECTOR (31 downto 0) := "00000000000000000000000000000000"
-);
+           OutAddress : out  STD_LOGIC_VECTOR (31 downto 0):= (others => '0'));
 end ProgramCounter;
 
 architecture Behavioral of ProgramCounter is
@@ -23,6 +22,7 @@ begin
 			OutAddress <= "00000000000000000000000000000000";
 		elsif rising_edge(clk) then 
 			OutAddress <= InAddress;
+			
 		end if;
 	end process;
 

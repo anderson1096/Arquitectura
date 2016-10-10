@@ -35,20 +35,16 @@ entity Multiplexor is
     Port ( In1 : in  STD_LOGIC_VECTOR (31 downto 0);
            In2 : in  STD_LOGIC_VECTOR (31 downto 0);
 			  Sc : in STD_LOGIC;
-           Sout : out  STD_LOGIC_VECTOR (31 downto 0));
+           Sout : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0'));
 end Multiplexor;
 
 architecture arq_Multiplexor of Multiplexor is
 
+
 begin
-	process(Sc)
-		begin
-			if (Sc = '0') then 
-				Sout <= IN1;
-			else
-				Sout <= IN2;
-			end if;
-	end process;	
+	Sout <= In1 when Sc ='0' else In2; 
+			
+	
 			
 
 end arq_Multiplexor;

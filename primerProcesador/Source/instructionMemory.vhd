@@ -36,7 +36,7 @@ entity instructionMemory is
 			  --clk : in STD_LOGIC;
 			  address : in  STD_LOGIC_VECTOR (31 downto 0);
            reset : in  STD_LOGIC;
-           outInstruction : out  STD_LOGIC_VECTOR (31 downto 0));
+           outInstruction : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0'));
 end instructionMemory;
 
 architecture arqInstructionMemory of instructionMemory is
@@ -57,7 +57,7 @@ architecture arqInstructionMemory of instructionMemory is
 		return temp_mem;
 	end function;
 	
-	signal instructions : rom_type := InitRomFromFile("testJMPL.data");
+	signal instructions : rom_type := InitRomFromFile("mov.data");
 	
 begin
 --reset,address, instructions)

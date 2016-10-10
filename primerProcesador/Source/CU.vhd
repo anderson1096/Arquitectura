@@ -34,7 +34,7 @@ use IEEE.STD_LOGIC_unsigned.ALL;
 entity CU is
     Port ( Op : in  STD_LOGIC_VECTOR (1 downto 0);
            Op3 : in  STD_LOGIC_VECTOR (5 downto 0);
-           Aluop : out  STD_LOGIC_VECTOR (5 downto 0));
+           Aluop : out  STD_LOGIC_VECTOR (5 downto 0) := (others => '0'));
 end CU;
 
 architecture arq_CU of CU is

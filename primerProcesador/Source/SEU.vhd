@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity SEU is
     Port ( Imm : in  STD_LOGIC_VECTOR (12 downto 0);
-           Sout : out  STD_LOGIC_VECTOR (31 downto 0));
+           Sout : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0'));
 end SEU;
 
 architecture arq_SEU of SEU is

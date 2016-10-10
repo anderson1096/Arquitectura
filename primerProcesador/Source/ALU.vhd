@@ -35,7 +35,7 @@ entity ALU is
     Port ( Aluop : in  STD_LOGIC_VECTOR (5 downto 0);
            In1 : in  STD_LOGIC_VECTOR (31 downto 0);
            In2 : in  STD_LOGIC_VECTOR (31 downto 0);
-           Result : out  STD_LOGIC_VECTOR (31 downto 0));
+           Result : out  STD_LOGIC_VECTOR (31 downto 0):= (others => '0'));
 end ALU;
 
 architecture arq_ALU of ALU is
