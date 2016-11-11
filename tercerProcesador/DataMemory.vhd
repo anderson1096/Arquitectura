@@ -1,46 +1,40 @@
 
-----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_arith.ALL;
-use IEEE.STD_LOGIC_unsigned.ALL;
+use IEEE.NUMERIC_STD.ALL;
+use IEEE.std_logic_unsigned.all;
+use std.textio.all;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity DataMemory is
     Port ( reset : in  STD_LOGIC;
-           c_Rd : in  STD_LOGIC_VECTOR (31 downto 0);
-           address : in  STD_LOGIC_VECTOR (4 downto 0);
-           WE : in  STD_LOGIC;
-           data : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0'));
+           cRD : in  STD_LOGIC_VECTOR (31 downto 0);
+           addres : in  STD_LOGIC_VECTOR (4 downto 0);
+           wrenmem : in  STD_LOGIC;
+           datatomem : out  STD_LOGIC_VECTOR (31 downto 0));
 end DataMemory;
 
-architecture arq_datamem of DataMemory is
+architecture Behavioral of DataMemory is
 
-type reg is array (0 to 31) of std_logic_vector(31 downto 0);
+type reg is array (0 to 31) of std_logic_vector (31 downto 0);
 
-signal registros: reg;
+signal myReg: reg; 
 
 begin
-process(WE, reset, address, c_Rd)
+process(wrenmem,reset,addres,cRD)
 	begin
 		
-		if (reset = '1') then
-			registros <= (others => x"00000000");
+		if(reset = '1') then 
+			myReg <= (others => x"00000000");
 		else
-			if (WE = '1') then
-				registros(conv_integer(address)) <= c_Rd;
+			if(wrenmem = '1') then --puede escribir, es un store
+				Myreg(conv_integer(addres)) <= cRD;
 			end if;
 		end if;
+		
+		datatomem <= Myreg(conv_integer(addres));
+			
 end process;
 
-data <= registros(conv_integer(address));
-end arq_datamem;
+end Behavioral;
 

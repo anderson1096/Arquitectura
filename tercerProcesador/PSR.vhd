@@ -1,59 +1,33 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    12:22:21 10/19/2016 
--- Design Name: 
--- Module Name:    PSR - arq_PSR 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
-----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity PSR is
-    Port ( NZVC : in  STD_LOGIC_VECTOR (3 downto 0);
-           ncwp : in  STD_LOGIC;
+    Port ( nzvc : in  STD_LOGIC_VECTOR (3 downto 0);
+           reset : in  STD_LOGIC;
            clk : in  STD_LOGIC;
-           Reset : in  STD_LOGIC;
-           cwp : out  STD_LOGIC;
-           Carry : out  STD_LOGIC);
+			  ncwp: in STD_LOGIC;
+			  icc : out STD_LOGIC_VECTOR (3 downto 0);
+           carry : out  STD_LOGIC;
+			  cwp : out STD_LOGIC);
 end PSR;
 
-architecture arq_PSR of PSR is
+architecture Behavioral of PSR is
 
 begin
-	
-	process(Reset, clk, ncwp, NZVC)
-		begin
-			if (Reset = '1') then 
-				cwp <= '0';
-				Carry <= '0';
-			elsif (rising_edge(clk)) then
-				cwp <= ncwp;
-				Carry <= NZVC(0);
-				
+
+	process(reset,clk,nzvc,ncwp)
+	begin
+		if reset='1' then
+			carry <= '0';
+		else
+			if rising_edge(clk) then
+				carry<=nzvc(0);
+				icc <= nzvc;
+				cwp<=ncwp;
+			end if;
 		end if;
 	end process;
-				
+	
 
-end arq_PSR;
+end Behavioral;
 

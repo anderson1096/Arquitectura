@@ -1,108 +1,190 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    17:46:00 10/05/2016 
--- Design Name: 
--- Module Name:    CU - arq_CU 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
-----------------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_arith.ALL;
-use IEEE.STD_LOGIC_unsigned.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+--SALIDAS PARA OP = 10
+-- ADD : 000000
+-- SUB : 000001
+-- AND : 000010
+-- ANDN (op1 and not op2) : 000011
+-- OR : 000100
+-- ORN : 000101
+-- XOR : 000110
+-- XNOR : 000111
+-- SUBcc: 001000
+-- SUBx : 001001
+-- SUBxcc: 001010
+-- ANDcc : 001011
+-- ANDNcc : 001100
+-- ORcc : 001101
+-- ORNcc : 001110
+-- XORcc : 001111
+-- XNORcc : 010000
+-- ADDx : 010001
+-- ADDXcc : 010010
+-- ADDcc : 010011
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+
 
 entity CU is
-    Port ( Op : in  STD_LOGIC_VECTOR (1 downto 0);
-           Op3 : in  STD_LOGIC_VECTOR (5 downto 0);
-			  icc : in STD_LOGIC_VECTOR (3 downto 0);
+    Port ( op : in  STD_LOGIC_VECTOR (1 downto 0); --formato
+           op3 : in  STD_LOGIC_VECTOR (5 downto 0); --operacion
+			  icc : in std_logic_vector (3 downto 0);
 			  cond : in std_logic_vector (3 downto 0);
+           salida : out  STD_LOGIC_VECTOR (5 downto 0);
 			  wrenmem : out STD_LOGIC;
-				rfsource : out STD_LOGIC_VECTOR (1 DOWNTO 0);
-				rfdest : out STD_LOGIC;
-				pcsource: out STD_LOGIC_VECTOR(1 DOWNTO 0);
-				we : out std_logic;
-           Aluop : out  STD_LOGIC_VECTOR (5 downto 0));
+			  rfsource: out STD_LOGIC_VECTOR(1 downto 0);
+			  rfdest : out STD_LOGIC;
+			  pcsource: out STD_LOGIC_VECTOR(1 downto 0);
+			  we : out std_logic);
 end CU;
 
-architecture arq_CU of CU is
+architecture Behavioral of CU is
 
-signal aux : STD_LOGIC_VECTOR(2 DOWNTO 0) := (others => '0');
+signal aux: STD_LOGIC_VECTOR(2 downto 0):=(others=>'0');			
 
 begin
-	--aritmetico logicas
-	process(Op, Op3)
-		begin 
-			case Op is
-				when "10" => 
-					case Op3 is
-						when "000000" => Aluop <= "000000";
-						when "000100" => Aluop <= "000001";
-						when "000001" => Aluop <= "000010";
-						when "000010" => Aluop <= "000011";
-						when "000011" => Aluop <= "000100";
-						when "000111" => Aluop <= "000101";
-						when "000101" => Aluop <= "000110";
-						when "000110" => Aluop <= "000111";
-						when others => Aluop <= "111111";
+	
+	process(op, op3)
+		
+		begin
+		
+			if(op = "11") then
+				case op3 is
+					
+					when "000000" => --load
+						salida <= "000000";
+					
+					when "000100" => --load
+						salida <= "000000";
+						
+					when others =>
+						Salida <= (others=>'1'); --error
+				end case;
+			end if;
+						
+		
+			if(op = "10") then --formato3
+			
+				case op3 is
+				
+					when 	"000000" => --Add
+						salida <= "000000";
+												
+					when 	"000100" => --Sub
+						salida <= "000001";
+						
+					when "000001"	 => -- And
+						salida <= "000010";
+												
+					when "000101"	 => --Andn
+						Salida <= "000011";
+					
+					when "000010"	 => --or
+						Salida <= "000100";
+						aux <= "111";
+												
+					when "000110"	 => --orn
+						Salida <= "000101";
+					
+					when "000011"	 => --xor
+						Salida <= "000110";
+												
+					when 	"000111" => --xnor
+						Salida <= "000111";
+						
+					when 	"010100" => --SUBcc
+						Salida <= "001000";
+					
+					when 	"001100" => --SUBx
+						Salida <= "001001";
+					
+					when 	"011100" => --SUBxcc
+						Salida <= "001010";
+					
+					when 	"010001" => --ANDcc
+						Salida <= "001011";
+						
+					when 	"010101" => --ANDNcc
+						Salida <= "001100";	
+						
+					when 	"010010" => --ORcc
+						Salida <= "001101";	
+						
+					when 	"010110" => --ORNcc
+						Salida <= "001110";	
+						
+					when 	"010011" => --XORcc
+						Salida <= "001111";
+						
+					when 	"010111" => --XNORcc
+						Salida <= "010000";
+						
+					when 	"001000" => --ADDx
+						Salida <= "010001";
+					
+					when 	"011000" => --ADDxcc
+						Salida <= "010010";
+						
+					when 	"010000" => --ADDcc
+						Salida <= "010011";
+						
+					when 	"111100" => --save
+						Salida <= "000000";
+						
+					when 	"111101" => --restore
+						Salida <= "000000";
+						
+					when 	"111000" => --jmpl
+						Salida <= "000000";
+
+					
+					when others =>
+						Salida <= (others=>'1'); --error
+					
 					end case;
-				when others => Aluop <= "111111";
-			end case;
-	end process;
+
+			end if;
+			
+			
+		end process;	
 	
 	process(op, op3, icc, cond)
 		begin
-			if (op = "11") then --formato 3 load y store
-				
+		
+			if(op = "11") then --formato3 de load y store
+			
 				if (op3 = "000100") then --store
 					wrenmem <= '1';
 					we <= '0';
-				else --load
+				else	--sino, es load
 					wrenmem <= '0';
 					we <= '1';
 				end if;
 			else
-					wrenmem <= '0';
-					we <= '1';
+				wrenmem <= '0';
+				we <= '1';
 			end if;
 			
-			--saltos
-			if (op = "01") then --call
+			--proceso para muxup
+			if (op = "01")then --es un call
 				pcsource <= "00";
 				we <= '1';
-			elsif (op = "00") then --branch
+			elsif (op = "00") then --es un branch
 				pcsource <= "01";
 				we <= '0';
-			elsif (op = "10") then
-				if (op3 = "111000") then --jumpl
-					pcsource <= "11";
+			elsif (op = "10") then 
+				if(op3 = "111000") then --jumpl
+					pcsource <= "11"; --es la alu
 					we <= '0';
-				else
+				else --aritmetica
 					pcsource <= "10";
 					we <= '1';
 				end if;
+				
 			end if;
 			
-			--proceso de los saltos
+			--proceso de saltos
 			
 			if(op = "00") then --formato2
 				
@@ -217,7 +299,8 @@ begin
 					
 					end case;
 						
-		end if;
+			end if;
+			
 	end process;
 	
 	process(op)
@@ -235,6 +318,9 @@ begin
 				rfdest <= '0';
 			end if;
 	end process;
-
-end arq_CU;
+			
+	
+	
+			
+end Behavioral;
 

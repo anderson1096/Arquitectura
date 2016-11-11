@@ -1,76 +1,114 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    16:57:31 10/05/2016 
--- Design Name: 
--- Module Name:    ALU - arq_ALU 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
-----------------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_arith.ALL;
-use IEEE.STD_LOGIC_unsigned.ALL;
-use IEEE.NUMERIC_STD.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+--ALU soporta las siguientes operaciones
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+-- ADD : 000000
+-- SUB : 000001
+-- AND : 000010
+-- ANDN (op1 and not op2) : 000011
+-- OR : 000100
+-- ORN : 000101
+-- XOR : 000110
+-- XNOR : 000111
+
+-- SUBcc: 001000
+-- SUBx : 001001
+-- SUBxcc: 001010
+-- ANDcc : 001011
+-- ANDNcc : 001100
+-- ORcc : 001101
+-- ORNcc : 001110
+-- XORcc : 001111
+-- XNORcc : 010000
+-- ADDx : 010001
+-- ADDxcc : 010010
+-- ADDcc : 010011
 
 entity ALU is
-    Port ( Aluop : in  STD_LOGIC_VECTOR (5 downto 0);
-           In1 : in  STD_LOGIC_VECTOR (31 downto 0);
-           In2 : in  STD_LOGIC_VECTOR (31 downto 0);
-			  Carry : in STD_LOGIC; 
-           Result : out  STD_LOGIC_VECTOR (31 downto 0):= (others => '0'));
+    Port ( A : in  STD_LOGIC_VECTOR (31 downto 0);
+           B : in  STD_LOGIC_VECTOR (31 downto 0);
+			  ALUOP : in  STD_LOGIC_VECTOR (5 downto 0);
+			  Carry : in STD_LOGIC;
+           Salida : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0'));
 end ALU;
 
-architecture arq_ALU of ALU is
+architecture Behavioral of ALU is
 
 begin
-	process(In1,In2,Aluop)
-		begin
-			case Aluop is
-				when "000000" => Result <= In1 + In2;
-				when "000001" => Result <= In1 - In2;
-				when "000010" => Result <= In1 and In2;
-				when "000011" => Result <= In1 or In2;
-				when "000100" => Result <= In1 xor In2;
-				when "000101" => Result <= In1 xnor In2;
-				when "000110" => Result <= In1 nand In2;
-				when "000111" => Result <= In1 nor In2;
-				when "001000" => Result <= In1 and In2; --Andcc
-				when "001001" => Result <= In1 nand In2; --Nandcc
-				when "001010" => Result <= In1 or In2; --Orcc
-				when "001011" => Result <= In1 nor In2; --Norcc
-				when "001100" => Result <= In1 xor In2; --Xorcc
-				when "001101" => Result <= In1 xnor In2; -- Xnorcc
-				when "001110" => Result <= In1 + In2; --Addc
-				when "001111" => Result <= In1 + In2 + Carry; --Addx
-				when "010000" => Result <= In1 + In2 + Carry; --Addxcc
-				when "010001" => Result <= In1 - In2; --Subcc
-				when "010010" => Result <= In1 - In2 - Carry; --Subx
-				when "010011" => Result <= In1 - In2 - Carry; --Subxcc
-				when "010100" => Result <= to_stdlogicvector(to_bitvector(In1) sll conv_integer(In2)); --SLL
-				when "010101" => Result <= to_stdlogicvector(to_bitvector(In1) srl conv_integer(In2)); --SRL
-				when others => Result <= "00000000000000000000000000000000";
-			end case;
-	end process;
 
-end arq_ALU;
+process(ALUOP,A,B)
+	begin
+		case ALUOP is
+		
+			when 	"000000" => --ADD
+				Salida <= A + B;
+			
+			when 	"000001" => --SUB
+				Salida <= A - B;
+				
+			when 	"000010" => --AND
+				Salida <= A and B;
+										
+			when 	"000011" => --ANDN
+				Salida <= A and not B;
+			
+			when 	"000100" => --OR
+				Salida <= A or B;
+										
+			when 	"000101" => --ORN
+				Salida <= A or not B;
+			
+			when 	"000110" => --XOR
+				Salida <= A xor B;
+										
+			when 	"000111" => --XNOR
+				Salida <= A xnor B;
+			
+			when 	"001000" => --SUBcc
+				Salida <= A - B;
+			
+			when 	"001001" => -- SUBx
+				Salida <= A - B - Carry;
+			
+			when 	"001010" => --SUBxcc
+				Salida <= A - B - Carry;
+			
+			when 	"001011" => --ANDcc
+				Salida <= A and B;
+			
+			when 	"001100" => --ANDNcc
+				Salida <= A and not B;
+			
+			when 	"001101" => --ORcc
+				Salida <= A or B;
+			
+			when 	"001110" => --ORNcc
+				Salida <= A or not B;
+			
+			when 	"001111" => --XORcc
+				Salida <= A xor B;
+			
+			when 	"010000" => --XNORcc
+				Salida <= A xnor B;
+			
+			when 	"010001" => --ADDx
+				Salida <= A + B + Carry;
+			
+			when 	"010010" => --ADDxcc
+				Salida <= A + B + Carry;
+			
+			when 	"010011" => --ADDcc 
+				Salida <= A + B;
+				
+			when others =>
+				Salida <= (others=>'1'); --error
+			
+			end case;
+
+	end process;	
+
+end Behavioral;
 

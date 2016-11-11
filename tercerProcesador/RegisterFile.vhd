@@ -1,69 +1,48 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    13:31:31 10/07/2016 
--- Design Name: 
--- Module Name:    RegisterFile - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
-----------------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_unsigned.ALL;
-use IEEE.STD_LOGIC_arith.ALL;
+use IEEE.numeric_std.all;
+use IEEE.std_logic_unsigned.all;
+use std.textio.all;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+entity RF is
+    Port ( rs1 : in  STD_LOGIC_VECTOR (5 downto 0);
+           rs2 : in  STD_LOGIC_VECTOR (5 downto 0);
+           rd : in  STD_LOGIC_VECTOR (5 downto 0);
+			  dwr : in  STD_LOGIC_VECTOR (31 downto 0);
+			  reset : in  STD_LOGIC;
+           crs1 : out  STD_LOGIC_VECTOR (31 downto 0);
+           crs2 : out  STD_LOGIC_VECTOR (31 downto 0);
+			  cRD : out  STD_LOGIC_VECTOR (31 downto 0);
+			  we : in std_logic);
+end RF;
 
-entity RegisterFile is
-    Port ( Rs1 : in  STD_LOGIC_VECTOR (4 downto 0);
-           Rs2 : in  STD_LOGIC_VECTOR (4 downto 0);
-           Rd : in  STD_LOGIC_VECTOR (4 downto 0);
-           Reset : in  STD_LOGIC;
-			  WEnable : in  STD_LOGIC;
-           Data : in  STD_LOGIC_VECTOR (31 downto 0);
-           Crs1 : out  STD_LOGIC_VECTOR (31 downto 0);
-			  Crd : out STD_LOGIC_VECTOR (31 DOWNTO 0);
-           Crs2 : out  STD_LOGIC_VECTOR (31 downto 0));
-end RegisterFile;
+architecture Behavioral of RF is
 
-architecture Behavioral of RegisterFile is
+type reg is array (0 to 39) of std_logic_vector (31 downto 0);
 
-type ram_type is array (0 to 31) of std_logic_vector (31 downto 0);
-signal registros : ram_type := (others => x"00000000");
+
+signal myReg: reg; 
 
 begin
-	process(Reset, Rs1, Rs2, Rd, Data)
-		begin
-			if Reset = '1' then
-				Crs1 <= (others => '0');
-				Crs2 <= (others => '0');
-			else
-				Crs1 <= registros(conv_integer(Rs1));
-				Crs2 <= registros(conv_integer(Rs2));
-				Crd <= registros(conv_integer(Rd));
-				
-				if WEnable = '1' and Rd /= "00000" then
-					registros(conv_integer(Rd)) <= Data;
-				end if;
-			end if;
+process(rs1,rs2,rd,dwr,reset)
+	begin 
+		myReg(0) <= x"00000000";
+		if reset = '0' then
+			if((rd/="00000") and (we = '1'))then
+				Myreg(conv_integer(rd)) <= dwr; 
+			end if;			
+			crs1 <= Myreg(conv_integer(rs1));
+			crs2 <= Myreg(conv_integer(rs2));
+			cRD <= Myreg(conv_integer(rd));
+		else
+			myReg <= (others => x"00000000");
+			crs1 <= (others => '0');
+			crs2 <= (others => '0');
+			cRD <= (others => '0');
+		end if;
 	end process;
-
+		
 end Behavioral;
 

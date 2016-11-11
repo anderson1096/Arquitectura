@@ -1,51 +1,25 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    16:37:39 10/05/2016 
--- Design Name: 
--- Module Name:    Multiplexor - arq_Multiplexor 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
-----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.STD_LOGIC_arith.ALL;
-use IEEE.STD_LOGIC_unsigned.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+entity MUX is
+		PORT(  a      : IN std_logic_vector(31 DOWNTO 0); 
+             b      : IN std_logic_vector(31 DOWNTO 0); 
+             sel    : IN std_logic; 
+             salida : OUT std_logic_vector(31 DOWNTO 0));
+end MUX;
 
-entity Multiplexor is
-    Port ( In1 : in  STD_LOGIC_VECTOR (31 downto 0);
-           In2 : in  STD_LOGIC_VECTOR (31 downto 0);
-			  Sc : in STD_LOGIC;
-           Sout : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0'));
-end Multiplexor;
-
-architecture arq_Multiplexor of Multiplexor is
-
+architecture Behavioral of MUX is
 
 begin
-	Sout <= In1 when Sc ='0' else In2; 
-			
-	
-			
 
-end arq_Multiplexor;
+PROCESS (sel, a, b) IS
+       BEGIN
+         CASE sel IS
+           WHEN '0' => salida <= a; --tierra
+           WHEN '1' => salida <= b; --rgb
+           WHEN OTHERS => salida <= (others => '0');
+         END CASE;
+END PROCESS;
 
+end Behavioral;

@@ -1,95 +1,79 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date:    07:40:32 10/19/2016 
--- Design Name: 
--- Module Name:    PSR_Modifier - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
-----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.numeric_std.all;
+use IEEE.std_logic_unsigned.all;
+use std.textio.all;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+-- SUBcc: 001000
+-- SUBxcc: 001010
+-- ANDcc : 001011
+-- ANDNcc : 001100
+-- ORcc : 001101
+-- ORNcc : 001110
+-- XORcc : 001111
+-- XNORcc : 010000
+-- ADDxcc : 010010
+-- ADDcc : 010011
 
 entity PSR_Modifier is
-    Port ( crs1 : in  STD_LOGIC;
-           crs2 : in  STD_LOGIC;
-           Reset : in  STD_LOGIC;
-           Aluop : in  STD_LOGIC_VECTOR (5 downto 0);
-           Aluresult : in  STD_LOGIC_VECTOR (31 downto 0);
-           NZVC : out  STD_LOGIC_VECTOR (3 downto 0));
+    Port ( ALUOP : in  STD_LOGIC_VECTOR (5 downto 0);
+           ALU_Result : in  STD_LOGIC_VECTOR (31 downto 0);
+           Crs1 : in  STD_LOGIC_VECTOR (31 downto 0);
+           Crs2 : in  STD_LOGIC_VECTOR (31 downto 0);
+           nzvc : out  STD_LOGIC_VECTOR (3 downto 0);
+			  reset: in STD_LOGIC
+			  );
 end PSR_Modifier;
 
 architecture Behavioral of PSR_Modifier is
 
+
+
 begin
-	process (Reset, Aluop, ALuresult, crs1, crs2)
-		begin
-			if Reset = '1' then 
-				NZVC <= "0000";
-			
-			else	
-				--Logicas
-				if Aluop = "001000" or Aluop = "001001" or Aluop = "001010" or ALuop = "001011" or Aluop = "001100" or ALuop = "001101" then 
-					NZVC(3) <= Aluresult(31);
-					if Aluresult = "00000000000000000000000000000000" then 
-						NZVC(2) <= '1';
-					else
-						NZVC(2) <= '0';
-					end if;
-					NZVC(1) <= '0';
-					NZVC(0) <= '0';
+
+	process(ALUOP, ALU_Result, Crs1, Crs2,reset)
+	begin
+		if (reset = '1') then
+			nzvc <= (others=>'0');
+		else
+			-- ANDcc or ANDNcc or ORcc or ORNcc or XORcc or XNORcc
+			if (ALUOP="001011" OR ALUOP="001100" OR ALUOP="001101" OR ALUOP="001110" OR ALUOP="001111" OR ALUOP="010000") then
+				nzvc(3) <= ALU_result(31);--el signo que traiga
+				if (conv_integer(ALU_result)=0) then
+					nzvc(2) <= '1';--porque el resultado da cero
+				else
+					nzvc(2) <= '0';
 				end if;
-				
-			
-				--Aritmeticas
-				
-				
-				--Add
-				if ALuop = "001110" or Aluop = "010000" then
-					NZVC(3) <= Aluresult(31);
-					if Aluresult = "00000000000000000000000000000000" then 
-						NZVC(2) <= '1';
-					else
-						NZVC(2) <= '0';
-					end if;
-					NZVC(1) <= (crs1 and crs2 and (not ALuresult(31))) or ((not crs1) and (not crs2) and Aluresult(31));
-					NZVC(0) <= (crs1 and crs2) or ((not ALuresult(31)) and (crs1 or crs2));
-				end if;
-						
-						--Sub
-				if ALuop = "010001" or Aluop = "010011" then
-					NZVC(3) <= Aluresult(31);
-					if Aluresult = "00000000000000000000000000000000" then 
-						NZVC(2) <= '1';
-					else
-						NZVC(2) <= '0';
-					end if;
-					NZVC(1) <= (crs1 and (not crs2) and (not ALuresult(31))) or ((not crs1) and crs2 and Aluresult(31));
-					NZVC(0) <= ((not crs1) and crs2) or (ALuresult(31) and ((not crs1) or crs2));
-				end if;
-				
+				nzvc(1) <= '0';--los operadores logicos no generan overflow ni carry
+				nzvc(0) <= '0';
 			end if;
-	end process;
-						
 			
+			-- ADDcc or ADDxcc
+			if (ALUOP="010011" or ALUOP="010010") then
+				nzvc(3) <= ALU_result(31);
+				if (conv_integer(ALU_result)=0) then
+					nzvc(2) <= '1';
+				else
+					nzvc(2) <= '0';
+				end if;
+				nzvc(1) <= (Crs1(31) and Crs2(31) and (not ALU_result(31))) or ((not Crs1(31)) and (not Crs2(31)) and ALU_result(31));
+				nzvc(0) <= (Crs1(31) and Crs2(31)) or ((not ALU_result(31)) and (Crs1(31) or Crs2(31)) );
+			end if;
+			
+			--SUBcc or SUBxcc
+			if (ALUOP="001000" or ALUOP="001010") then
+				nzvc(3) <= ALU_result(31);
+				if (conv_integer(ALU_result)=0) then
+					nzvc(2) <= '1';
+				else
+					nzvc(2) <= '0';
+				end if;
+				nzvc(1) <= (Crs1(31) and (not Crs2(31)) and (not ALU_result(31))) or ((not Crs1(31)) and Crs2(31) and ALU_result(31));
+				nzvc(0) <= ((not Crs1(31)) and Crs2(31)) or (ALU_result(31) and ((not Crs1(31)) or Crs2(31)));
+			end if;
+		end if;
+		
+	end process;
+	
 end Behavioral;
 
