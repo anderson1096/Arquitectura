@@ -38,6 +38,7 @@ entity RegisterFile is
            Reset : in  STD_LOGIC;
            Data : in  STD_LOGIC_VECTOR (31 downto 0);
            Crs1 : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
+		   Crd : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0');
            Crs2 : out  STD_LOGIC_VECTOR (31 downto 0) := (others => '0'));
 end RegisterFile;
 
@@ -56,6 +57,7 @@ begin
 			else
 				Crs1 <= registros(conv_integer(nrs1));
 				Crs2 <= registros(conv_integer(nrs2));
+				Crd <= registros(conv_integer(nrd))
 				if nrd /= "000000" then
 					registros(conv_integer(nrd)) <= Data;
 				end if;
